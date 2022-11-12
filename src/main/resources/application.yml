@@ -1,0 +1,36 @@
+# Common Setting
+ext:
+  group: ${ext.group}
+  applicationName: ${ext.applicationName}
+  version: ${ext.version}
+
+server:
+  port: 8888
+  shutdown: graceful
+
+spring:
+  application:
+    name: ${ext.applicationName}
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:aremote;MODE=MySQL
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      encoding: UTF-8
+
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs/${spring.application.name}
