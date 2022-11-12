@@ -1,7 +1,7 @@
 # Common Setting
 ext:
   group: ${ext.group}
-  applicationName: ${ext.applicationName}
+  appName: ${ext.appName}
   version: ${ext.version}
 
 server:
@@ -10,7 +10,7 @@ server:
 
 spring:
   application:
-    name: ${ext.applicationName}
+    name: \${ext.appName}
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:aremote;MODE=MySQL
@@ -30,7 +30,6 @@ spring:
     init:
       encoding: UTF-8
 
-
 springdoc:
   api-docs:
-    path: /v3/api-docs/${spring.application.name}
+    path: /v3/api-docs/\${spring.application.name}

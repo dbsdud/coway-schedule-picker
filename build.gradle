@@ -30,7 +30,7 @@ repositories {
 
 ext {
     set('group', group)
-    set('applicationName', "schedule-picker")
+    set('appName', "schedule-picker")
     set('version', version)
 }
 

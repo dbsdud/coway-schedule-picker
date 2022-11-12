@@ -27,7 +27,7 @@ public class OpenApiConfig {
     public OpenAPI openApi() {
         return new OpenAPI()
                 .addServersItem(new Server().url("/"))
-                .info(new Info().title("aremote-"+ appName + " OPEN API")
+                .info(new Info().title("schedule-picker-"+ appName + " OPEN API")
                         .description(group + " " +
                                 appName + " API 명세서")
                         .version(version));
