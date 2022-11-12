@@ -2,11 +2,21 @@ plugins {
     id 'org.springframework.boot' version '2.7.5'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
+    // QueryDSL
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'io.dbsdud'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+    [apiElements, runtimeElements].each {
+        it.outgoing.artifacts.removeIf { it.buildDependencies.getDependencies(null).contains(jar) }
+        it.outgoing.artifact(bootJar)
+    }
+}
 
 configurations {
     compileOnly {
@@ -18,10 +28,26 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    set('group', group)
+    set('applicationName', "schedule-picker")
+}
+
+processResources {
+    filesMatching('**/application.yml') {
+        expand(project.properties)
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
@@ -32,3 +58,30 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// QueryDSL 적용
+def querydslSrcDir = 'src/main/generated'
+
+querydsl {
+    library = "com.querydsl:querydsl-apt"
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+tasks.withType(JavaCompile) { options.annotationProcessorGeneratedSourcesDirectory = file(querydslSrcDir) }
