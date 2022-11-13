@@ -22,6 +22,7 @@ spring:
     show-sql: true
     properties:
       hibernate.format_sql: true
+    defer-datasource-initialization: on
   h2:
     console:
       enabled: true
@@ -29,6 +30,7 @@ spring:
   sql:
     init:
       encoding: UTF-8
+      data-locations: classpath:init.sql # 배포시 주석
 
 springdoc:
   api-docs:
