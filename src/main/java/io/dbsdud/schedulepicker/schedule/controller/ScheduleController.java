@@ -23,43 +23,9 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     /*
-     * TODO: 1. 월 단위 스케쥴 목록을 가져온다.
+     * 1. 특정 판매인의 월 단위 스케쥴 목록을 가져온다.
+     * TODO: 쿼리수정 해야 함(where coordinateId = ? and dateTime like(StartsWith) ?%)
      * */
-
-    /*
-     * TODO: 2. 현재 시간 이후의 전체 일정을 가져온다.
-     * */
-
-    /*
-     * TODO: 3. 특정 날짜의 스케쥴 목록을 가져온다.
-     * */
-
-    /*
-     * TODO: 4. 특정 일정의 상세정보를 가져온다.
-     * */
-
-    /*
-     * TODO: 5. 특정 날짜 이전의 스케쥴 목록을 가져온다.
-     * */
-
-    /*
-     * TODO: 6. 오늘 날짜 + 3개월 후의 스케쥴 목록을 가져온다.
-     * */
-
-    /*
-     * TODO: 7. 특정 일시에 일정을 저장한다.
-     * */
-
-    /*
-     * TODO: 8. 특정 일시의 일정을 수정한다.
-     * */
-
-    @GetMapping
-    public ResponseEntity<Page<ScheduleResponse>> getAllSchedules(final PageRequest pageRequest) {
-        Page<ScheduleResponse> scheduleResponses = scheduleService.findAll(pageRequest.of()).map(ScheduleResponse::new);
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
-    }
-
     @GetMapping("/find")
     public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateId(
             @RequestParam(name = "coordinate") final long coordinateId,
@@ -69,15 +35,47 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
-    @PostMapping
+    /*
+     * TODO: 2. 현재 시간 이후의 전체 일정을 가져온다. (GreaterThanEqual)
+     * */
+
+    /*
+     * TODO: 3. 특정 날짜의 스케쥴 목록을 가져온다. (findByDateTime)
+     * */
+
+    /*
+     * TODO: 4. 특정 일정의 상세정보를 가져온다. (findById)
+     * */
+
+    /*
+     * TODO: 5. 특정 날짜 이전의 스케쥴 목록을 가져온다. (Before)
+     * */
+
+    /*
+     * TODO: 6. 오늘 날짜 + 3개월 후의 스케쥴 목록을 가져온다. -> QueryDSL now() + 3개월
+     * */
+
+    /*
+     * 7. 특정 일시에 일정을 저장한다.
+     * */
+    @PostMapping("/register")
     public ResponseEntity<ScheduleResponse> registerSchedule(@RequestBody @Valid RegisterScheduleRequest req) {
         ScheduleResponse scheduleResponse = scheduleService.createSchedule(req);
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
     }
 
-    @PutMapping
+    /*
+     * 8. 특정 일시의 일정을 수정한다.
+     * */
+    @PutMapping("/update")
     public ResponseEntity<ScheduleResponse> updateSchedule(@RequestBody @Valid UpdateScheduleRequest req) {
         ScheduleResponse scheduleResponse = scheduleService.updateSchedule(req);
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ScheduleResponse>> getAllSchedules(final PageRequest pageRequest) {
+        Page<ScheduleResponse> scheduleResponses = scheduleService.findAll(pageRequest.of()).map(ScheduleResponse::new);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 }
