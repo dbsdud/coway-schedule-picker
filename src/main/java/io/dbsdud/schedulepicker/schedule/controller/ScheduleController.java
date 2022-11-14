@@ -22,6 +22,38 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    /*
+     * 1. 월 단위 스케쥴 목록을 가져온다.
+     * */
+
+    /*
+     * 2. 현재 시간 이후의 전체 일정을 가져온다.
+     * */
+
+    /*
+     * 3. 특정 날짜의 스케쥴 목록을 가져온다.
+     * */
+
+    /*
+     * 4. 특정 일정의 상세정보를 가져온다.
+     * */
+
+    /*
+     * 5. 특정 날짜 이전의 스케쥴 목록을 가져온다.
+     * */
+
+    /*
+     * 6. 오늘 날짜 + 3개월 후의 스케쥴 목록을 가져온다.
+     * */
+
+    /*
+     * 7. 특정 일시에 일정을 저장한다.
+     * */
+
+    /*
+     * 8. 특정 일시의 일정을 수정한다.
+     * */
+
     @GetMapping
     public ResponseEntity<Page<ScheduleResponse>> getAllSchedules(final PageRequest pageRequest) {
         Page<ScheduleResponse> scheduleResponses = scheduleService.findAll(pageRequest.of()).map(ScheduleResponse::new);
