@@ -3,16 +3,21 @@ package io.dbsdud.schedulepicker.schedule.controller;
 import io.dbsdud.schedulepicker.common.util.PageRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.RegisterScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.UpdateScheduleRequest;
+import io.dbsdud.schedulepicker.schedule.data.dto.response.DetailScheduleResponse;
 import io.dbsdud.schedulepicker.schedule.data.dto.response.ScheduleResponse;
+import io.dbsdud.schedulepicker.schedule.data.entity.Schedule;
 import io.dbsdud.schedulepicker.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -24,32 +29,64 @@ public class ScheduleController {
 
     /*
      * 1. 특정 판매인의 월 단위 스케쥴 목록을 가져온다.
-     * TODO: 쿼리수정 해야 함(where coordinateId = ? and dateTime like(StartsWith) ?%)
      * */
     @GetMapping("/find")
-    public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateId(
+    public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateIdAndDateTimeBetween (
             @RequestParam(name = "coordinate") final long coordinateId,
+            @RequestParam(name = "year") final String year,
+            @RequestParam(name = "month") final String month,
             final PageRequest pageRequest
     ) {
-        Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateId(coordinateId, pageRequest.of()).map(ScheduleResponse::new);
+        Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeBetween(coordinateId, year, month, pageRequest.of()).map(ScheduleResponse::new);
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
     /*
      * TODO: 2. 현재 시간 이후의 전체 일정을 가져온다. (GreaterThanEqual)
      * */
+    @GetMapping("/find/afterNow")
+    public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateIdAndDateTimeGreaterThanEqual (
+            @RequestParam(name = "coordinate") final long coordinateId,
+            final PageRequest pageRequest
+    ) {
+        Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeGreaterThanEqual(coordinateId, pageRequest.of()).map(ScheduleResponse::new);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
+    }
 
     /*
      * TODO: 3. 특정 날짜의 스케쥴 목록을 가져온다. (findByDateTime)
      * */
+    @GetMapping("/find/date")
+    public ResponseEntity<Optional<ScheduleResponse>> getSchedulesByCoordinateIdAndDateTime (
+            @RequestParam(name = "coordinate") final long coordinateId,
+            @RequestParam(name = "year") final String year,
+            @RequestParam(name = "month") final String month,
+            @RequestParam(name = "day") final String day
+    ) {
+        Optional<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTime(coordinateId, year, month, day).map(ScheduleResponse::new);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
+    }
 
     /*
      * TODO: 4. 특정 일정의 상세정보를 가져온다. (findById)
      * */
+    @GetMapping("/find/detail/{scheduleId}")
+    public ResponseEntity<DetailScheduleResponse> getDetail(@PathVariable @Valid long scheduleId) {
+        DetailScheduleResponse scheduleResponse = new DetailScheduleResponse(scheduleService.findById(scheduleId));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
+    }
 
     /*
-     * TODO: 5. 특정 날짜 이전의 스케쥴 목록을 가져온다. (Before)
+     * TODO: 5. 오늘 날짜 이전의 스케쥴 목록을 가져온다. (Before)
      * */
+    @GetMapping("/find/beforeNow")
+    public ResponseEntity<Page<ScheduleResponse>> getAllByCoordinateAndDateTimeBefore(
+            @RequestParam(name = "coordinate") final long coordinateId,
+            final PageRequest pageRequest
+    ) {
+        Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeLessThan(coordinateId, pageRequest.of()).map(ScheduleResponse::new);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
+    }
 
     /*
      * TODO: 6. 오늘 날짜 + 3개월 후의 스케쥴 목록을 가져온다. -> QueryDSL now() + 3개월

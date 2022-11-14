@@ -13,18 +13,21 @@ import java.time.LocalDateTime;
 public class ScheduleResponse {
 
     private long scheduleId;
-    private ScheduleStatus status;
-    private LocalDateTime dateTime;
+    private String status;
+    private String dateTime;
     private long coordinateId;
     private long customerId;
-    private ProductType productType;
+    private String productType;
 
     public ScheduleResponse(Schedule schedule) {
+        String date = String.valueOf(schedule.getDateTime()).split("T")[0];
+        String time = String.valueOf(schedule.getDateTime()).split("T")[1];
+
         this.scheduleId = schedule.getScheduleId();
-        this.status = schedule.getStatus();
-        this.dateTime = schedule.getDateTime();
+        this.status = schedule.getStatus().getStatus1value();
+        this.dateTime = date + " " + time;
         this.coordinateId = schedule.getCoordinate().getCoordinateId();
         this.customerId = schedule.getCustomer().getCustomerId();
-        this.productType = schedule.getProduct().getType();
+        this.productType = schedule.getProduct().getType().getType1Value();
     }
 }
