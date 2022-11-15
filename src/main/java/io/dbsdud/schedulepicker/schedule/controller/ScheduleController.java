@@ -33,16 +33,17 @@ public class ScheduleController {
     @GetMapping("/find")
     public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateIdAndDateTimeBetween (
             @RequestParam(name = "coordinate") final long coordinateId,
-            @RequestParam(name = "year") final String year,
-            @RequestParam(name = "month") final String month,
+            @RequestParam(name = "year") final int year,
+            @RequestParam(name = "month") final int month,
             final PageRequest pageRequest
     ) {
         Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeBetween(coordinateId, year, month, pageRequest.of()).map(ScheduleResponse::new);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
     /*
-     * TODO: 2. 현재 시간 이후의 전체 일정을 가져온다. (GreaterThanEqual)
+     * 2. 현재 시간 이후의 전체 일정을 가져온다. (GreaterThanEqual)
      * */
     @GetMapping("/find/afterNow")
     public ResponseEntity<Page<ScheduleResponse>> getAllSchedulesByCoordinateIdAndDateTimeGreaterThanEqual (
@@ -50,34 +51,38 @@ public class ScheduleController {
             final PageRequest pageRequest
     ) {
         Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeGreaterThanEqual(coordinateId, pageRequest.of()).map(ScheduleResponse::new);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
     /*
-     * TODO: 3. 특정 날짜의 스케쥴 목록을 가져온다. (findByDateTime)
+     * 3. 특정 날짜의 스케쥴 목록을 가져온다. (findByDateTime)
      * */
     @GetMapping("/find/date")
     public ResponseEntity<Optional<ScheduleResponse>> getSchedulesByCoordinateIdAndDateTime (
             @RequestParam(name = "coordinate") final long coordinateId,
-            @RequestParam(name = "year") final String year,
-            @RequestParam(name = "month") final String month,
-            @RequestParam(name = "day") final String day
+            @RequestParam(name = "year") final int year,
+            @RequestParam(name = "month") final int month,
+            @RequestParam(name = "day") final int day
     ) {
         Optional<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTime(coordinateId, year, month, day).map(ScheduleResponse::new);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
     /*
-     * TODO: 4. 특정 일정의 상세정보를 가져온다. (findById)
+     * 4. 특정 일정의 상세정보를 가져온다. (findById)
      * */
     @GetMapping("/find/detail/{scheduleId}")
     public ResponseEntity<DetailScheduleResponse> getDetail(@PathVariable @Valid long scheduleId) {
+
         DetailScheduleResponse scheduleResponse = new DetailScheduleResponse(scheduleService.findById(scheduleId));
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
     }
 
     /*
-     * TODO: 5. 오늘 날짜 이전의 스케쥴 목록을 가져온다. (Before)
+     * 5. 오늘 날짜 이전의 스케쥴 목록을 가져온다. (Before)
      * */
     @GetMapping("/find/beforeNow")
     public ResponseEntity<Page<ScheduleResponse>> getAllByCoordinateAndDateTimeBefore(
@@ -85,34 +90,37 @@ public class ScheduleController {
             final PageRequest pageRequest
     ) {
         Page<ScheduleResponse> scheduleResponses = scheduleService.findAllByCoordinateIdAndDateTimeLessThan(coordinateId, pageRequest.of()).map(ScheduleResponse::new);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
     }
 
     /*
-     * TODO: 6. 오늘 날짜 + 3개월 후의 스케쥴 목록을 가져온다. -> QueryDSL now() + 3개월
-     * */
-
-    /*
-     * 7. 특정 일시에 일정을 저장한다.
+     * 6. 특정 일시에 일정을 저장한다.
      * */
     @PostMapping("/register")
     public ResponseEntity<ScheduleResponse> registerSchedule(@RequestBody @Valid RegisterScheduleRequest req) {
+
         ScheduleResponse scheduleResponse = scheduleService.createSchedule(req);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
     }
 
     /*
-     * 8. 특정 일시의 일정을 수정한다.
+     * 7. 특정 일시의 일정을 수정한다.
      * */
     @PutMapping("/update")
     public ResponseEntity<ScheduleResponse> updateSchedule(@RequestBody @Valid UpdateScheduleRequest req) {
+
         ScheduleResponse scheduleResponse = scheduleService.updateSchedule(req);
+
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ScheduleResponse>> getAllSchedules(final PageRequest pageRequest) {
-        Page<ScheduleResponse> scheduleResponses = scheduleService.findAll(pageRequest.of()).map(ScheduleResponse::new);
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
-    }
+//    @GetMapping
+//    public ResponseEntity<Page<ScheduleResponse>> getAllSchedules(final PageRequest pageRequest) {
+//
+//        Page<ScheduleResponse> scheduleResponses = scheduleService.findAll(pageRequest.of()).map(ScheduleResponse::new);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(scheduleResponses);
+//    }
 }

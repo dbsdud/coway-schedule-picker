@@ -12,16 +12,14 @@ import java.util.Optional;
 
 public interface ScheduleService {
 
-    Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, String year, String month, Pageable pageable);
+    Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, int year, int month, Pageable pageable);
     Page<Schedule> findAllByCoordinateIdAndDateTimeGreaterThanEqual(long coordinateId, Pageable pageable);
-    Optional<Schedule> findAllByCoordinateIdAndDateTime(long coordinateId, String year, String month, String day);
+    Optional<Schedule> findAllByCoordinateIdAndDateTime(long coordinateId, int year, int month, int day);
     Schedule findById(long scheduleId);
     Page<Schedule> findAllByCoordinateIdAndDateTimeLessThan(long coordinateId, Pageable pageable);
-
-
     ScheduleResponse createSchedule(RegisterScheduleRequest req);
     ScheduleResponse updateSchedule(UpdateScheduleRequest req);
 
-    Page<Schedule> findAll(Pageable pageable);
+//    Page<Schedule> findAll(Pageable pageable);
 
 }

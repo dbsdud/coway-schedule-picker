@@ -22,4 +22,5 @@ public class DetailScheduleResponse {
         this.address = schedule.getCustomer().getAddress().getAddress1() + ", " + schedule.getCustomer().getAddress().getAddress2();
         this.productType = schedule.getProduct().getType().getType1Value();
     }
+
 }

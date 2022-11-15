@@ -1,12 +1,8 @@
 package io.dbsdud.schedulepicker.schedule.data.dto.response;
 
-import io.dbsdud.schedulepicker.product.data.entity.ProductType;
 import io.dbsdud.schedulepicker.schedule.data.entity.Schedule;
-import io.dbsdud.schedulepicker.schedule.data.entity.ScheduleStatus;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,6 +16,7 @@ public class ScheduleResponse {
     private String productType;
 
     public ScheduleResponse(Schedule schedule) {
+
         String date = String.valueOf(schedule.getDateTime()).split("T")[0];
         String time = String.valueOf(schedule.getDateTime()).split("T")[1];
 
@@ -30,4 +27,5 @@ public class ScheduleResponse {
         this.customerId = schedule.getCustomer().getCustomerId();
         this.productType = schedule.getProduct().getType().getType1Value();
     }
+
 }

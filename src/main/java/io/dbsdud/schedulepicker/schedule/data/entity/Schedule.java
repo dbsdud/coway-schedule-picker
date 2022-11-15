@@ -76,4 +76,5 @@ public class Schedule extends BaseTimeEntity {
         this.status = ScheduleStatus.VERIFIED;
         this.dateTime = req.getDateTime();
     }
+
 }

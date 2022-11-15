@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
@@ -40,60 +41,43 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public Page<Schedule> findAll(Pageable pageable) {
-        return scheduleRepository.findAll(pageable);
-    }
+    public Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, int year, int month, Pageable pageable) {
 
-    @Transactional(readOnly = true)
-    public Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, String year, String month, Pageable pageable) {
-        String firstDateTimeStr = year + "-" + month + "-01" + " 00:00";
-        LocalDateTime firstDateTime = LocalDateTime.parse(firstDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(Integer.parseInt(year), Integer.parseInt(month) - 1, 1);
-        String lastDateTimeStr = year + "-" + month + "-" + cal.getActualMaximum(Calendar.DAY_OF_MONTH) + " 23:59";
-        LocalDateTime lastDateTime = LocalDateTime.parse(lastDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        LocalDateTime firstDateTime = LocalDateTime.of(year, month, 1, 0, 0);
+        int lastDateOfDay = Integer.parseInt(String.valueOf(YearMonth.of(year, month).atEndOfMonth().getDayOfMonth()));
+        LocalDateTime lastDateTime = LocalDateTime.of(year, month, lastDateOfDay, 23, 59);
 
         return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeBetween(coordinateId, firstDateTime, lastDateTime, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<Schedule> findAllByCoordinateIdAndDateTimeGreaterThanEqual(long coordinateId, Pageable pageable) {
-        String nowStr = String.valueOf(LocalDateTime.now());
-        String dateStr = nowStr.split("T")[0];
-        String timeStr = nowStr.split("T")[1].substring(0, 8);
 
-        nowStr = dateStr + " " + timeStr;
-
-        LocalDateTime now = LocalDateTime.parse(nowStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime now = LocalDateTime.now();
 
         return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeGreaterThanEqual(coordinateId, now, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Optional<Schedule> findAllByCoordinateIdAndDateTime(long coordinateId, String year, String month, String day) {
-        String startDateTimeStr = year + "-" + month + "-" + day + " 00:00";
-        LocalDateTime startDateTime = LocalDateTime.parse(startDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        String endDateTimeStr = year + "-" + month + "-" + day + " 23:59";
-        LocalDateTime endDateTime = LocalDateTime.parse(endDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    public Optional<Schedule> findAllByCoordinateIdAndDateTime(long coordinateId, int year, int month, int day) {
+
+        LocalDateTime startDateTime = LocalDateTime.of(year, month, day, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(year, month, day, 23, 59);
 
         return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeBetween(coordinateId, startDateTime, endDateTime);
     }
 
     @Transactional(readOnly = true)
     public Page<Schedule> findAllByCoordinateIdAndDateTimeLessThan(long coordinateId, Pageable pageable) {
-        String nowStr = String.valueOf(LocalDateTime.now());
-        String dateStr = nowStr.split("T")[0];
-        String timeStr = nowStr.split("T")[1].substring(0, 6);
 
-        nowStr = dateStr + " " + timeStr;
-        LocalDateTime now = LocalDateTime.parse(nowStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:"));
+        LocalDateTime now = LocalDateTime.now();
 
         return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeLessThan(coordinateId, now, pageable);
     }
 
 
     public ScheduleResponse createSchedule(RegisterScheduleRequest req) {
+
         String dateTimeStr = req.getDate() + " " + req.getTime();
         Coordinate coordinate = coordinateRepository.getReferenceById(req.getCoordinateId());
         Customer customer = customerRepository.getReferenceById(req.getCustomerId());
@@ -104,13 +88,23 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Transactional(readOnly = true)
     public Schedule findById(long scheduleId) {
+
         final Optional<Schedule> schedule = scheduleRepository.findById(scheduleId);
+
         return schedule.get();
     }
 
     public ScheduleResponse updateSchedule(UpdateScheduleRequest req) {
+
         Schedule schedule = findById(req.getCoordinateId());
         schedule.update(req);
+
         return new ScheduleResponse(scheduleRepository.getReferenceById(req.getScheduleId()));
     }
+
+//    @Transactional(readOnly = true)
+//    public Page<Schedule> findAll(Pageable pageable) {
+//        return scheduleRepository.findAll(pageable);
+//    }
+
 }
