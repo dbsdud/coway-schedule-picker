@@ -8,6 +8,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: on
   h2:
     console:
       enabled: true
