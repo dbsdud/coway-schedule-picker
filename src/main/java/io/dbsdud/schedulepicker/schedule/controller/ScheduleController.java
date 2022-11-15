@@ -1,22 +1,21 @@
 package io.dbsdud.schedulepicker.schedule.controller;
 
 import io.dbsdud.schedulepicker.common.util.PageRequest;
+import io.dbsdud.schedulepicker.proxy.NotificationProxy;
+import io.dbsdud.schedulepicker.proxy.request.MailRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.RegisterScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.UpdateScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.response.DetailScheduleResponse;
 import io.dbsdud.schedulepicker.schedule.data.dto.response.ScheduleResponse;
-import io.dbsdud.schedulepicker.schedule.data.entity.Schedule;
 import io.dbsdud.schedulepicker.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -26,6 +25,8 @@ import java.util.Optional;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+
+    private final NotificationProxy notificationProxy;
 
     /*
      * 1. 특정 판매인의 월 단위 스케쥴 목록을 가져온다.
@@ -98,9 +99,16 @@ public class ScheduleController {
      * 6. 특정 일시에 일정을 저장한다.
      * */
     @PostMapping("/register")
-    public ResponseEntity<ScheduleResponse> registerSchedule(@RequestBody @Valid RegisterScheduleRequest req) {
-
+    public ResponseEntity<ScheduleResponse> registerSchedule(
+            @RequestBody @Valid RegisterScheduleRequest req
+    ) {
         ScheduleResponse scheduleResponse = scheduleService.createSchedule(req);
+
+        MailRequest mailRequest = new MailRequest();
+        mailRequest.setMail(req.getMail());
+        mailRequest.setDate(req.getDate());
+        mailRequest.setTime(req.getTime());
+        notificationProxy.sendMail(mailRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleResponse);
     }

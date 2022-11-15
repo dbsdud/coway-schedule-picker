@@ -5,7 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NotificationRequest {
+public class MailRequest {
 
-    private String receiver;
+    private String date;
+    private String time;
+    private String mail;
+
 }

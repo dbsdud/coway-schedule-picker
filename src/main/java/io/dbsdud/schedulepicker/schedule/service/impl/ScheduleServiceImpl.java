@@ -6,6 +6,8 @@ import io.dbsdud.schedulepicker.customer.data.entity.Customer;
 import io.dbsdud.schedulepicker.customer.data.repository.CustomerRepository;
 import io.dbsdud.schedulepicker.product.data.entity.Product;
 import io.dbsdud.schedulepicker.product.data.repository.ProductRepository;
+import io.dbsdud.schedulepicker.proxy.NotificationProxy;
+import io.dbsdud.schedulepicker.proxy.request.MailRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.RegisterScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.UpdateScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.response.ScheduleResponse;
@@ -19,14 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -39,6 +35,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final CoordinateRepository coordinateRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+
+    private final NotificationProxy notificationProxy;
 
     @Transactional(readOnly = true)
     public Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, int year, int month, Pageable pageable) {
