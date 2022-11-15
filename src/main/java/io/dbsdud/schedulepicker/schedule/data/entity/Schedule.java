@@ -1,5 +1,6 @@
 package io.dbsdud.schedulepicker.schedule.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dbsdud.schedulepicker.common.model.BaseTimeEntity;
 import io.dbsdud.schedulepicker.coordinate.data.entity.Coordinate;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -24,6 +26,7 @@ public class Schedule extends BaseTimeEntity {
     private long scheduleId;
     @Enumerated(value = EnumType.STRING)
     private ScheduleStatus status;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dateTime;
 
     @JsonIgnore
@@ -56,13 +59,13 @@ public class Schedule extends BaseTimeEntity {
         this.product = product;
     }
 
-    public static Schedule create(LocalDateTime dateTime,
+    public static Schedule create(String dateTimeStr,
                            Coordinate coordinate,
                            Customer customer,
                            Product product) {
         return Schedule.builder()
                 .status(ScheduleStatus.SEND_REQUEST)
-                .dateTime(dateTime)
+                .dateTime(LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .coordinate(coordinate)
                 .customer(customer)
                 .product(product)
@@ -73,4 +76,5 @@ public class Schedule extends BaseTimeEntity {
         this.status = ScheduleStatus.VERIFIED;
         this.dateTime = req.getDateTime();
     }
+
 }

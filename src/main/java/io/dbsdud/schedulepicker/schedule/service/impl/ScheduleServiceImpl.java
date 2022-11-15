@@ -19,6 +19,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,32 +41,70 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public Page<Schedule> findAll(Pageable pageable) {
-        return scheduleRepository.findAll(pageable);
+    public Page<Schedule> findAllByCoordinateIdAndDateTimeBetween(long coordinateId, int year, int month, Pageable pageable) {
+
+        LocalDateTime firstDateTime = LocalDateTime.of(year, month, 1, 0, 0);
+        int lastDateOfDay = Integer.parseInt(String.valueOf(YearMonth.of(year, month).atEndOfMonth().getDayOfMonth()));
+        LocalDateTime lastDateTime = LocalDateTime.of(year, month, lastDateOfDay, 23, 59);
+
+        return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeBetween(coordinateId, firstDateTime, lastDateTime, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<Schedule> findAllByCoordinateId(long coordinateId, Pageable pageable) {
-        return scheduleRepository.findAllByCoordinate_CoordinateId(coordinateId, pageable);
+    public Page<Schedule> findAllByCoordinateIdAndDateTimeGreaterThanEqual(long coordinateId, Pageable pageable) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeGreaterThanEqual(coordinateId, now, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Schedule> findAllByCoordinateIdAndDateTime(long coordinateId, int year, int month, int day) {
+
+        LocalDateTime startDateTime = LocalDateTime.of(year, month, day, 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(year, month, day, 23, 59);
+
+        return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeBetween(coordinateId, startDateTime, endDateTime);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Schedule> findAllByCoordinateIdAndDateTimeLessThan(long coordinateId, Pageable pageable) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return scheduleRepository.findAllByCoordinate_CoordinateIdAndDateTimeLessThan(coordinateId, now, pageable);
+    }
+
+
     public ScheduleResponse createSchedule(RegisterScheduleRequest req) {
+
+        String dateTimeStr = req.getDate() + " " + req.getTime();
         Coordinate coordinate = coordinateRepository.getReferenceById(req.getCoordinateId());
         Customer customer = customerRepository.getReferenceById(req.getCustomerId());
         Product product = productRepository.getReferenceById(req.getProductId());
 
-        return new ScheduleResponse(scheduleRepository.save(Schedule.create(req.getDateTime(), coordinate, customer, product)));
+        return new ScheduleResponse(scheduleRepository.save(Schedule.create(dateTimeStr, coordinate, customer, product)));
     }
 
     @Transactional(readOnly = true)
     public Schedule findById(long scheduleId) {
+
         final Optional<Schedule> schedule = scheduleRepository.findById(scheduleId);
+
         return schedule.get();
     }
 
     public ScheduleResponse updateSchedule(UpdateScheduleRequest req) {
+
         Schedule schedule = findById(req.getCoordinateId());
         schedule.update(req);
+
         return new ScheduleResponse(scheduleRepository.getReferenceById(req.getScheduleId()));
     }
+
+//    @Transactional(readOnly = true)
+//    public Page<Schedule> findAll(Pageable pageable) {
+//        return scheduleRepository.findAll(pageable);
+//    }
+
 }
