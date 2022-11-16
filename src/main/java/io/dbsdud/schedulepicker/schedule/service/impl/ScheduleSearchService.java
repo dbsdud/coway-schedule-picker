@@ -3,6 +3,7 @@ package io.dbsdud.schedulepicker.schedule.service.impl;
 import com.querydsl.jpa.JPQLQuery;
 import io.dbsdud.schedulepicker.coordinate.data.entity.QCoordinate;
 import io.dbsdud.schedulepicker.customer.data.entity.QCustomer;
+import io.dbsdud.schedulepicker.customer.data.entity.QHaveProduct;
 import io.dbsdud.schedulepicker.product.data.entity.ProductType;
 import io.dbsdud.schedulepicker.product.data.entity.QProduct;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.ScheduleSearchType;
@@ -30,6 +31,7 @@ public class ScheduleSearchService extends QuerydslRepositorySupport {
     }
 
     public Page<Schedule> search (
+            final long coordinateId,
             final ScheduleSearchType searchType,
             final String value,
             final Integer year,
@@ -39,30 +41,48 @@ public class ScheduleSearchService extends QuerydslRepositorySupport {
             final Integer minute,
             final Pageable pageable
     ) {
-        final QCustomer customer = QCustomer.customer;
-        final QProduct product = QProduct.product;
+        final QHaveProduct haveProduct = QHaveProduct.haveProduct;
+//        final QMatchingSchedule matchingSchedule = QMatchingSchedule.matchingSchedule;
+//        final QCustomer customer = QCustomer.customer;
+//        final QProduct product = QProduct.product;
         final QSchedule schedule = QSchedule.schedule;
 
         final JPQLQuery<Schedule> query = switch (searchType) {
             case CUSTOMER_NAME -> from(schedule)
-                    .leftJoin(schedule.customer, customer)
-                    .where(customer.name.contains(value));
+                    .leftJoin(schedule.haveProduct, haveProduct)
+                    .where(haveProduct.customer.name.contains(value)
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
+//                    .leftJoin(schedule.customer, customer)
+//                    .where(customer.name.contains(value));
             case CUSTOMER_ADDRESS -> from(schedule)
-                    .leftJoin(schedule.customer, customer)
-                    .where(customer.address.address1.contains(value)
-                            .or(customer.address.address2.contains(value)));
+                    .leftJoin(schedule.haveProduct, haveProduct)
+                    .where(haveProduct.customer.address.address1.contains(value)
+                            .or(haveProduct.customer.address.address2.contains(value))
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
+//                    .leftJoin(schedule.customer, customer)
+//                    .where(customer.address.address1.contains(value)
+//                            .or(customer.address.address2.contains(value)));
             case CUSTOMER_TEL -> from(schedule)
-                    .leftJoin(schedule.customer, customer)
-                    .where(customer.tel.contains(value));
+                    .leftJoin(schedule.haveProduct, haveProduct)
+                    .where(haveProduct.customer.tel.contains(value)
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
+//                    .leftJoin(schedule.customer, customer)
+//                    .where(customer.tel.contains(value));
             case PRODUCT_TYPE -> from(schedule)
-                    .leftJoin(schedule.product, product)
-                    .where(product.type.eq(ProductType.valueOf(value)));
+                    .leftJoin(schedule.haveProduct, haveProduct)
+                    .where(haveProduct.product.type.eq(ProductType.valueOf(value))
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
+//                    .leftJoin(schedule.product, product)
+//                    .where(product.type.eq(ProductType.valueOf(value)));
             case SCHEDULE_DATE -> from(schedule)
-                    .where(schedule.dateTime.between(LocalDateTime.of(year, month, day, 0, 0), LocalDateTime.of(year, month, day, 23, 59)));
+                    .where(schedule.dateTime.between(LocalDateTime.of(year, month, day, 0, 0), LocalDateTime.of(year, month, day, 23, 59))
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
             case SCHEDULE_DATETIME -> from(schedule)
-                    .where(schedule.dateTime.eq(LocalDateTime.of(year, month, day, hour, minute)));
+                    .where(schedule.dateTime.eq(LocalDateTime.of(year, month, day, hour, minute))
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
             case SCHEDULE_STATUS -> from(schedule)
-                    .where(schedule.status.eq(ScheduleStatus.valueOf(value)));
+                    .where(schedule.status.eq(ScheduleStatus.valueOf(value))
+                            .and(schedule.coordinate.coordinateId.eq(coordinateId)));
         };
 
         final List<Schedule> scheduleList = Objects.requireNonNull(getQuerydsl()).applyPagination(pageable, query).fetch();

@@ -99,7 +99,7 @@ public class ScheduleController {
      * 6. 특정 일시에 일정을 저장한다.
      * */
     @PostMapping("/register")
-    public ResponseEntity<ScheduleResponse> registerSchedule(
+    public ResponseEntity<ScheduleResponse> registerSchedule (
             @RequestBody @Valid RegisterScheduleRequest req
     ) {
         ScheduleResponse scheduleResponse = scheduleService.createSchedule(req);

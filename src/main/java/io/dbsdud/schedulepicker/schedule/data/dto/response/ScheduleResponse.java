@@ -24,8 +24,10 @@ public class ScheduleResponse {
         this.status = schedule.getStatus().getStatus1value();
         this.dateTime = date + " " + time;
         this.coordinateId = schedule.getCoordinate().getCoordinateId();
-        this.customerId = schedule.getCustomer().getCustomerId();
-        this.productType = schedule.getProduct().getType().getType1Value();
+        this.customerId = schedule.getHaveProduct().getCustomer().getCustomerId();
+        this.productType = schedule.getHaveProduct().getProduct().getType().getType1Value();
+//        this.customerId = schedule.getCustomer().getCustomerId();
+//        this.productType = schedule.getProduct().getType().getType1Value();
     }
 
 }

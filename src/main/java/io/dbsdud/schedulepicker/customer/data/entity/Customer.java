@@ -29,22 +29,23 @@ public class Customer extends BaseTimeEntity {
     @JoinColumn(name = "coordinateId")
     private Coordinate coordinate;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Product> products;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+//    private List<Product> products;
 
     @Builder
     public Customer(long customerId,
                     String name,
                     String tel,
                     Address address,
-                    Coordinate coordinate,
-                    List<Product> products) {
+                    Coordinate coordinate
+//                    List<Product> products
+    ) {
         this.customerId = customerId;
         this.name = name;
         this.tel = tel;
         this.address = address;
         this.coordinate = coordinate;
-        this.products = products;
+//        this.products = products;
     }
 }

@@ -2,12 +2,11 @@ package io.dbsdud.schedulepicker.schedule.service.impl;
 
 import io.dbsdud.schedulepicker.coordinate.data.entity.Coordinate;
 import io.dbsdud.schedulepicker.coordinate.data.repository.CoordinateRepository;
-import io.dbsdud.schedulepicker.customer.data.entity.Customer;
+import io.dbsdud.schedulepicker.customer.data.entity.HaveProduct;
 import io.dbsdud.schedulepicker.customer.data.repository.CustomerRepository;
-import io.dbsdud.schedulepicker.product.data.entity.Product;
+import io.dbsdud.schedulepicker.customer.data.repository.HaveProductRepository;
 import io.dbsdud.schedulepicker.product.data.repository.ProductRepository;
 import io.dbsdud.schedulepicker.proxy.NotificationProxy;
-import io.dbsdud.schedulepicker.proxy.request.MailRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.RegisterScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.request.UpdateScheduleRequest;
 import io.dbsdud.schedulepicker.schedule.data.dto.response.ScheduleResponse;
@@ -35,6 +34,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final CoordinateRepository coordinateRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final HaveProductRepository haveProductRepository;
 
     private final NotificationProxy notificationProxy;
 
@@ -78,10 +78,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         String dateTimeStr = req.getDate() + " " + req.getTime();
         Coordinate coordinate = coordinateRepository.getReferenceById(req.getCoordinateId());
-        Customer customer = customerRepository.getReferenceById(req.getCustomerId());
-        Product product = productRepository.getReferenceById(req.getProductId());
+        HaveProduct haveProduct = haveProductRepository.findHaveProductByCustomer_CustomerIdAndProduct_ProductId(req.getCustomerId(), req.getProductId());
+//        Customer customer = customerRepository.getReferenceById(req.getCustomerId());
+//        Product product = productRepository.getReferenceById(req.getProductId());
 
-        return new ScheduleResponse(scheduleRepository.save(Schedule.create(dateTimeStr, coordinate, customer, product)));
+        return new ScheduleResponse(scheduleRepository.save(Schedule.create(dateTimeStr, coordinate, haveProduct)));
+//        return new ScheduleResponse(scheduleRepository.save(Schedule.create(dateTimeStr, coordinate, customer, product)));
     }
 
     @Transactional(readOnly = true)

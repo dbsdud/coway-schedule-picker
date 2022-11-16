@@ -23,31 +23,32 @@ public class Coordinate extends BaseTimeEntity {
     private String name;
     private String tel;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
-    private List<Schedule> schedules;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
-    private List<Customer> customers;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
-    private List<Product> products;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
+//    private List<Schedule> schedules;
+//
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
+//    private List<Customer> customers;
+//
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "coordinate", cascade = CascadeType.ALL)
+//    private List<Product> products;
 
     @Builder
     public Coordinate(long coordinateId,
                       String name,
-                      String tel,
-                      List<Schedule> schedules,
-                      List<Customer> customers,
-                      List<Product> products) {
+                      String tel
+//                      List<Schedule> schedules,
+//                      List<Customer> customers,
+//                      List<Product> products
+    ) {
         this.coordinateId = coordinateId;
         this.name = name;
         this.tel = tel;
-        this.schedules = schedules;
-        this.customers = customers;
-        this.products = products;
+//        this.schedules = schedules;
+//        this.customers = customers;
+//        this.products = products;
     }
 
 }

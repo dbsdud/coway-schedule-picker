@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,6 +23,7 @@ public class ScheduleSearchController {
 
     @GetMapping
     public ResponseEntity<Page<SearchScheduleResponse>> searchSchedule(
+            @RequestParam(name = "coordinateId") @Valid final long coordinateId,
             @RequestParam(name = "type") @Valid final ScheduleSearchType type,
             @RequestParam(name = "value") @Valid final String value,
             @RequestParam(name = "year", required = false) final Integer year,
@@ -35,7 +33,7 @@ public class ScheduleSearchController {
             @RequestParam(name = "minute", required = false) final Integer minute,
             final PageRequest pageRequest
     ) {
-        Page<SearchScheduleResponse> searchScheduleResponses = scheduleSearchService.search(type, value, year, month, day, hour, minute, pageRequest.of()).map(SearchScheduleResponse::new);
+        Page<SearchScheduleResponse> searchScheduleResponses = scheduleSearchService.search(coordinateId, type, value, year, month, day, hour, minute, pageRequest.of()).map(SearchScheduleResponse::new);
 
         return ResponseEntity.status(HttpStatus.OK).body(searchScheduleResponses);
     }

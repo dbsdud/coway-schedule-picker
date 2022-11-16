@@ -2,27 +2,23 @@ package io.dbsdud.schedulepicker.schedule.data.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 @Getter
 @Setter
 public class SearchScheduleRequest {
 
-    @NotNull
+    @Valid
+    private long coordinateId;
+    @Valid
     private ScheduleSearchType searchType;
-    @NotNull
+    @Valid
     private String value;
-    @Nullable
-    private int year;
-    @Nullable
-    private int month;
-    @Nullable
-    private int day;
-    @Nullable
-    private int hour;
-    @Nullable
-    private int minute;
+    private Integer year;
+    private Integer month;
+    private Integer day;
+    private Integer hour;
+    private Integer minute;
 
 }
