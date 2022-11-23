@@ -14,7 +14,9 @@ public class UpdateScheduleRequest {
     private long customerId;
     private long productId;
     private long scheduleId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime dateTime;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
+//    private LocalDateTime dateTime;
+    private String date;
+    private String time;
 
 }

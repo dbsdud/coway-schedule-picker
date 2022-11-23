@@ -18,8 +18,7 @@ public class Address {
     private String address2;
 
     @Builder
-    public Address(String address1,
-                   String address2) {
+    public Address(String address1, String address2) {
         this.address1 = address1;
         this.address2 = address2;
     }

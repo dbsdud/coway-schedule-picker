@@ -34,11 +34,7 @@ public class Customer extends BaseTimeEntity {
 //    private List<Product> products;
 
     @Builder
-    public Customer(long customerId,
-                    String name,
-                    String tel,
-                    Address address,
-                    Coordinate coordinate
+    public Customer(long customerId, String name, String tel, Address address, Coordinate coordinate
 //                    List<Product> products
     ) {
         this.customerId = customerId;

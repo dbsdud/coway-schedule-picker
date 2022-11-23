@@ -96,8 +96,10 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     public ScheduleResponse updateSchedule(UpdateScheduleRequest req) {
 
+        String dateTimeStr = req.getDate() + " " + req.getTime();
+
         Schedule schedule = findById(req.getCoordinateId());
-        schedule.update(req);
+        schedule.update(dateTimeStr);
 
         return new ScheduleResponse(scheduleRepository.getReferenceById(req.getScheduleId()));
     }

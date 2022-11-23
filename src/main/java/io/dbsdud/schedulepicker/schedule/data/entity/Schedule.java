@@ -82,9 +82,9 @@ public class Schedule extends BaseTimeEntity {
                 .build();
     }
 
-    public void update(UpdateScheduleRequest req) {
+    public void update(String dateTimeStr) {
         this.status = ScheduleStatus.VERIFIED;
-        this.dateTime = req.getDateTime();
+        this.dateTime = LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
 }
